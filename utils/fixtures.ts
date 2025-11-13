@@ -11,5 +11,4 @@ export const test = base.extend<TestOptions>({
         const reauestHandler = new RequestHandler(request, baseUrl);
         await use(reauestHandler);
     }
-    
 })

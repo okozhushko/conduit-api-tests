@@ -67,6 +67,7 @@ export class RequestHandler {
     const url = this.getUrl();
     const response = await this.request.put(url, {
       headers: this.apiHeaders,
+      data: this.apiBody
     });    
     expect(response.status()).toEqual(statusCode);
     const responseJSON = await response.json();
