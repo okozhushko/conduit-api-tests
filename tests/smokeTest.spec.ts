@@ -3,12 +3,13 @@ import { expect } from "../utils/customExpect";
 
 let authToken: string;
 
-test.beforeAll("Run before all", async ({ api }) => {
+test.beforeAll("Run before all", async ({ api, config }) => {
   const tokenResponse = await api
     .path("/users/login")
-    .body({ user: { email: "pwapiuser@test.com", password: "Welcome" } })
+    .body({ user: { email: config.userEmail, password: config.userPassword} })
     .postRequest(200);
   authToken = "Token " + tokenResponse.user.token;
+  console.log(tokenResponse.user);
 });
 
 test("Get articles", async ({ api }) => {
