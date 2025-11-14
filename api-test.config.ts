@@ -1,5 +1,5 @@
 const processNew = process.env.TEST_ENV
-const env = processNew || "qa" //"dev" is the default environment and could be changed to "test" or "prod"
+const env = processNew || "dev" //"dev" is the default environment and could be changed to "test" or "prod"
 console.log('Test environment '+ env);
 
 const config = {
