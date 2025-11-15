@@ -2,16 +2,11 @@ import { test } from "../utils/fixtures";
 import { expect } from "../utils/customExpect";
 import { createToken } from "../helpers/createToken";
 
-let authToken: string;
-
-test.beforeAll("Run before all", async ({ config }) => {
-  authToken = await createToken(config.userEmail, config.userPassword);
-});
-
 test("Get articles", async ({ api }) => {
   const response = await api
     .path("/articles")
     .params({ limit: 10, offset: 0 })
+    .clearAuth()
     .getRequest(200);
   expect(response.articles.length).shouldBeLessThanOrEqual(10);
   expect(response.articlesCount).shouldEqual(10);
@@ -27,7 +22,6 @@ test("Create and delete article", async ({ api }) => {
   // Create new article
   const createArticleResponse = await api
     .path("/articles/")
-    .headers({ Authorization: authToken })
     .body({ article: { title: "New Test Article", description: "Test Description", body: "Test Body", tagList: [] } })
     .postRequest(201);
   expect(createArticleResponse.article.title).toEqual("New Test Article");
@@ -36,7 +30,6 @@ test("Create and delete article", async ({ api }) => {
   // Get articles
   const articlesResponse = await api
     .path("/articles")
-    .headers({ Authorization: authToken })
     .params({ limit: 10, offset: 0 })
     .getRequest(200);
   expect(articlesResponse.articles[0].title).shouldEqual("New Test Article");
@@ -44,13 +37,11 @@ test("Create and delete article", async ({ api }) => {
   // Delete article
   await api
     .path(`/articles/${slugId}`)
-    .headers({ Authorization: authToken })
     .deleteRequest(204);
 
   //Check article is deleted
   const articlesResponseTwo = await api
     .path("/articles")
-    .headers({ Authorization: authToken })
     .params({ limit: 10, offset: 0 })
     .getRequest(200);
   expect(articlesResponseTwo.articles[0].title).not.shouldEqual("New Test Article");
@@ -60,7 +51,6 @@ test("Create and delete article", async ({ api }) => {
 test("Create, Update and delete article", async ({ api }) => {
   const createArticleResponse = await api
     .path("/articles/")
-    .headers({ Authorization: authToken })
     .body({ article: { title: "Test NEW TEST", description: "Test Description", body: "Test Body", tagList: [] } })
     .postRequest(201);
   expect(createArticleResponse.article.title).shouldEqual("Test NEW TEST");
@@ -68,7 +58,6 @@ test("Create, Update and delete article", async ({ api }) => {
 
   const updateArticleResponse = await api
     .path(`/articles/${slugId}`)
-    .headers({ Authorization: authToken })
     .body({ article: { title: "Test NEW TEST Modified", description: "Updated Description", body: "Updated Body" } })
     .putRequest(200);
   expect(updateArticleResponse.article.title).shouldEqual("Test NEW TEST Modified");
@@ -76,19 +65,16 @@ test("Create, Update and delete article", async ({ api }) => {
 
   const articlesResponse = await api
     .path("/articles")
-    .headers({ Authorization: authToken })
     .params({ limit: 10, offset: 0 })
     .getRequest(200);
   expect(articlesResponse.articles[0].title).shouldEqual("Test NEW TEST Modified");
 
   await api
     .path(`/articles/${newSlugId}`)
-    .headers({ Authorization: authToken })
     .deleteRequest(204);
 
   const articlesResponseTwo = await api
     .path("/articles")
-    .headers({ Authorization: authToken })
     .params({ limit: 10, offset: 0 })
     .getRequest(200);
   expect(articlesResponseTwo.articles[0].title).not.shouldEqual("Test NEW TEST Modified");

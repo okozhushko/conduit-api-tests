@@ -6,7 +6,7 @@ import { request } from "@playwright/test";
 export async function createToken(email: string, password: string) {
     const context = await request.newContext();
     const logger = new APILogger();
-    const api = new RequestHandler(context, config.apiUrl, logger);
+    const api = new RequestHandler(context, config.apiUrl, logger );
 
     try {
         const tokenResponse = await api
