@@ -12,5 +12,8 @@
     "@playwright/test": "^1.56.1",
     "@types/node": "^24.10.0",
     "ajv": "^8.17.1"
+  },
+  "dependencies": {
+    "ajv-formats": "^3.0.1"
   }
 }

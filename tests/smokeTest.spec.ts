@@ -1,6 +1,5 @@
 import { test } from "../utils/fixtures";
-import { expect } from "../utils/customExpect";
-import { createToken } from "../helpers/createToken";
+import { expect } from "../utils/custom-expect";
 import { validateSchema } from "../utils/schema-validator";
 
 test("Get articles", async ({ api }) => {
@@ -9,7 +8,7 @@ test("Get articles", async ({ api }) => {
     .params({ limit: 10, offset: 0 })
     .clearAuth()
     .getRequest(200);
-  await expect(response).shouldMatchSchema('articles', 'GET_articles', true)
+  await expect(response).shouldMatchSchema('articles', 'GET_articles')
   expect(response.articles.length).shouldBeLessThanOrEqual(10);
   expect(response.articlesCount).shouldEqual(10);
 });
