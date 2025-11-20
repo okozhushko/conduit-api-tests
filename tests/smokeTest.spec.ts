@@ -1,6 +1,8 @@
 import { test } from "../utils/fixtures";
 import { expect } from "../utils/custom-expect";
-import articleResponsePayload from "../request-objects/POST-article.json";
+import articleRequestPayload from "../request-objects/POST-article.json";
+import { Faker, faker } from '@faker-js/faker';
+
 
 test("Get articles", async ({ api }) => {
   const response = await api
@@ -24,10 +26,11 @@ test("Get test tags", async ({ api }) => {
 
 test("Create and delete article", async ({ api }) => {
   // Create new article
-  articleResponsePayload.article.title = 'This is an object title'
+  const articleTitle = faker.lorem.sentence(5)
+  articleRequestPayload.article.title = articleTitle
   const createArticleResponse = await api
     .path("/articles/")
-    .body(articleResponsePayload)
+    .body(articleRequestPayload)
     .postRequest(201);
 await expect(createArticleResponse).shouldMatchSchema('articles', 'POST_articles')
   expect(createArticleResponse.article.title).toEqual("This is an object title");
@@ -54,39 +57,36 @@ await expect(createArticleResponse).shouldMatchSchema('articles', 'POST_articles
 
 });
 
-test("Create, Update and delete article", async ({ api }) => {
+test("Create, Update and Delete article", async ({ api }) => {
+  const articleTitle = faker.lorem.sentence(5)
+  const articleRequest = JSON.parse(JSON.stringify(articleRequestPayload))
+  articleRequest.article.title = articleTitle
   const createArticleResponse = await api
-    .path("/articles/")
-    .body({
-      article: {
-        title: "Test NEW TEST",
-        description: "Test Description",
-        body: "Test Body",
-        tagList: []
-      }
-    })
+    .path("/articles")
+    .body(articleRequest)
     .postRequest(201);
-  expect(createArticleResponse.article.title).shouldEqual("Test NEW TEST");
+  expect(createArticleResponse.article.title).shouldEqual(articleTitle);
   const slugId = createArticleResponse.article.slug;
 
+  const articleTitleUpdated = faker.lorem.sentence(5)
   const updateArticleResponse = await api
     .path(`/articles/${slugId}`)
     .body({
       article: {
-        title: "Test NEW TEST Modified",
+        title: articleTitleUpdated,
         description: "Updated Description",
         body: "Updated Body"
       }
     })
     .putRequest(200);
-  expect(updateArticleResponse.article.title).shouldEqual("Test NEW TEST Modified");
+  expect(updateArticleResponse.article.title).shouldEqual(articleTitleUpdated);
   const newSlugId = updateArticleResponse.article.slug;
 
   const articlesResponse = await api
     .path("/articles")
     .params({ limit: 10, offset: 0 })
     .getRequest(200);
-  expect(articlesResponse.articles[0].title).shouldEqual("Test NEW TEST Modified");
+  expect(articlesResponse.articles[0].title).shouldEqual(articleTitleUpdated);
 
   await api
     .path(`/articles/${newSlugId}`)
@@ -96,7 +96,7 @@ test("Create, Update and delete article", async ({ api }) => {
     .path("/articles")
     .params({ limit: 10, offset: 0 })
     .getRequest(200);
-  expect(articlesResponseTwo.articles[0].title).not.shouldEqual("Test NEW TEST Modified");
+  expect(articlesResponseTwo.articles[0].title).not.shouldEqual(articleTitleUpdated);
 
 });
 
