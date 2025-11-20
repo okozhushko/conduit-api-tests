@@ -24,11 +24,13 @@ test("Get test tags", async ({ api }) => {
 
 test("Create and delete article", async ({ api }) => {
   // Create new article
+  articleResponsePayload.article.title = 'This is an object title'
   const createArticleResponse = await api
     .path("/articles/")
     .body(articleResponsePayload)
     .postRequest(201);
-  expect(createArticleResponse.article.title).toEqual("New Test Article");
+await expect(createArticleResponse).shouldMatchSchema('articles', 'POST_articles')
+  expect(createArticleResponse.article.title).toEqual("This is an object title");
   const slugId = createArticleResponse.article.slug;
 
   // Get articles
@@ -36,8 +38,7 @@ test("Create and delete article", async ({ api }) => {
     .path("/articles")
     .params({ limit: 10, offset: 0 })
     .getRequest(200);
-  await expect(createArticleResponse).shouldMatchSchema('articles', 'POST_articles')
-  expect(articlesResponse.articles[0].title).shouldEqual("New Test Article");
+  expect(articlesResponse.articles[0].title).shouldEqual("This is an object title");
 
   // Delete article
   await api
@@ -49,7 +50,7 @@ test("Create and delete article", async ({ api }) => {
     .path("/articles")
     .params({ limit: 10, offset: 0 })
     .getRequest(200);
-  expect(articlesResponseTwo.articles[0].title).not.shouldEqual("New Test Article");
+  expect(articlesResponseTwo.articles[0].title).not.shouldEqual("This is an object title");
 
 });
 
