@@ -1,4 +1,3 @@
-import { error } from 'console'
 import fs from 'fs/promises'
 import path, { dirname } from 'path'
 import Ajv from 'ajv'
@@ -10,16 +9,8 @@ const ajv = new Ajv({ allErrors: true })
 export async function validateSchema(dirName: string, fileName: string, responseBody: object, createSchemaFlag: boolean = false) {
   const schemaPath = path.join(SCHEMA_BASE_PATH, dirName, `${fileName}_schema.json`)
 
-  if (createSchemaFlag) {
-    try {
-      const generatedSchema = createSchema(responseBody)
-      await fs.mkdir(path.dirname(schemaPath), { recursive: true })
-      await fs.writeFile(schemaPath, JSON.stringify(generatedSchema, null, 4))
-    } catch (error) {
-      const message = error instanceof Error ? error.message : String(error)
-      throw new Error(`Failed to create xchema file: ${message}`)
-    }
-  }
+  if (createSchemaFlag) await generateNewSchema(responseBody, schemaPath)
+
 
   const schema = await loadSchema(schemaPath)
   const validate = ajv.compile(schema);
@@ -43,5 +34,16 @@ export async function validateSchema(dirName: string, fileName: string, response
       const message = err instanceof Error ? err.message : String(err)
       throw new Error(`Failed to read the schema file: ${message}`)
     }
+  }
+}
+
+async function generateNewSchema(responseBody: Object, schemaPath: string) {
+  try {
+    const generatedSchema = createSchema(responseBody)
+    await fs.mkdir(path.dirname(schemaPath), { recursive: true })
+    await fs.writeFile(schemaPath, JSON.stringify(generatedSchema, null, 4))
+  } catch (error) {
+    const message = error instanceof Error ? error.message : String(error)
+    throw new Error(`Failed to create xchema file: ${message}`)
   }
 }
