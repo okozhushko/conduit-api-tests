@@ -2,7 +2,7 @@ import fs from 'fs/promises'
 import path from 'path' 
 import Ajv from 'ajv'
 import { createSchema } from 'genson-js'
-import addFormats from "ajv-formats"
+import addFormats from 'ajv-formats'
 
 const SCHEMA_BASE_PATH = './response-schemas'
 const ajv = new Ajv({ allErrors: true })

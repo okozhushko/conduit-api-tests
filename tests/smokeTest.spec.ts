@@ -5,7 +5,7 @@ import { Faker, faker } from '@faker-js/faker';
 import { getNewRandomArticle } from "../utils/data-generator";
 
 
-test("Get articles", async ({ api }) => {
+test("Get Articles", async ({ api }) => {
   const response = await api
     .path("/articles")
     .params({ limit: 10, offset: 0 })
@@ -16,7 +16,7 @@ test("Get articles", async ({ api }) => {
   expect(response.articlesCount).shouldEqual(10);
 });
 
-test("Get test Tags", async ({ api }) => {
+test("Get Test Tags", async ({ api }) => {
   const response = await api
     .path("/tags")
     .getRequest(200);
@@ -25,7 +25,7 @@ test("Get test Tags", async ({ api }) => {
   expect(response.tags.length).shouldBeLessThanOrEqual(10);
 });
 
-test("Create and Delete Article", async ({ api }) => {
+test("Create And Delete Article", async ({ api }) => {
   // Create new article
   const articleRequest = getNewRandomArticle()
   const createArticleResponse = await api
@@ -57,7 +57,7 @@ test("Create and Delete Article", async ({ api }) => {
 
 });
 
-test("Create, Update and Delete article", async ({ api }) => {
+test("Create, Update And Delete Article", async ({ api }) => {
   const articleTitle = faker.lorem.sentence(5)
   const articleRequest = JSON.parse(JSON.stringify(articleRequestPayload))
   articleRequest.article.title = articleTitle
