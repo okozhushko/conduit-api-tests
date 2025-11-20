@@ -1,6 +1,6 @@
 import { test } from "../utils/fixtures";
 import { expect } from "../utils/custom-expect";
-import { validateSchema } from "../utils/schema-validator";
+import articleResponsePayload from "../request-objects/POST-article.json";
 
 test("Get articles", async ({ api }) => {
   const response = await api
@@ -26,7 +26,7 @@ test("Create and delete article", async ({ api }) => {
   // Create new article
   const createArticleResponse = await api
     .path("/articles/")
-    .body({ article: { title: "New Test Article", description: "Test Description", body: "Test Body", tagList: [] } })
+    .body(articleResponsePayload)
     .postRequest(201);
   expect(createArticleResponse.article.title).toEqual("New Test Article");
   const slugId = createArticleResponse.article.slug;
@@ -56,14 +56,27 @@ test("Create and delete article", async ({ api }) => {
 test("Create, Update and delete article", async ({ api }) => {
   const createArticleResponse = await api
     .path("/articles/")
-    .body({ article: { title: "Test NEW TEST", description: "Test Description", body: "Test Body", tagList: [] } })
+    .body({
+      article: {
+        title: "Test NEW TEST",
+        description: "Test Description",
+        body: "Test Body",
+        tagList: []
+      }
+    })
     .postRequest(201);
   expect(createArticleResponse.article.title).shouldEqual("Test NEW TEST");
   const slugId = createArticleResponse.article.slug;
 
   const updateArticleResponse = await api
     .path(`/articles/${slugId}`)
-    .body({ article: { title: "Test NEW TEST Modified", description: "Updated Description", body: "Updated Body" } })
+    .body({
+      article: {
+        title: "Test NEW TEST Modified",
+        description: "Updated Description",
+        body: "Updated Body"
+      }
+    })
     .putRequest(200);
   expect(updateArticleResponse.article.title).shouldEqual("Test NEW TEST Modified");
   const newSlugId = updateArticleResponse.article.slug;
