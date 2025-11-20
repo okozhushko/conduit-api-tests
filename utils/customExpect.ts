@@ -20,7 +20,7 @@ declare global {
 
 
 export const expect = baseExpect.extend({
-    async shouldMatchSchema(resived: any, dirName: string, fileName: string, createSchemaFlag: boolean = false) {
+    async shouldMatchSchema(resived: any, dirName: string, fileName: string, createSchemaFlag: boolean = false) { // to refresh schema need to change bolean to TRUE
         let pass: boolean;
         let message: string = '';
 
