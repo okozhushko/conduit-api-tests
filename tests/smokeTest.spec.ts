@@ -2,6 +2,7 @@ import { test } from "../utils/fixtures";
 import { expect } from "../utils/custom-expect";
 import articleRequestPayload from "../request-objects/POST-article.json";
 import { Faker, faker } from '@faker-js/faker';
+import { getNewRandomArticle } from "../utils/data-generator";
 
 
 test("Get articles", async ({ api }) => {
@@ -15,7 +16,7 @@ test("Get articles", async ({ api }) => {
   expect(response.articlesCount).shouldEqual(10);
 });
 
-test("Get test tags", async ({ api }) => {
+test("Get test Tags", async ({ api }) => {
   const response = await api
     .path("/tags")
     .getRequest(200);
@@ -24,16 +25,15 @@ test("Get test tags", async ({ api }) => {
   expect(response.tags.length).shouldBeLessThanOrEqual(10);
 });
 
-test("Create and delete article", async ({ api }) => {
+test("Create and Delete Article", async ({ api }) => {
   // Create new article
-  const articleTitle = faker.lorem.sentence(5)
-  articleRequestPayload.article.title = articleTitle
+  const articleRequest = getNewRandomArticle()
   const createArticleResponse = await api
     .path("/articles/")
-    .body(articleRequestPayload)
+    .body(articleRequest)
     .postRequest(201);
-await expect(createArticleResponse).shouldMatchSchema('articles', 'POST_articles')
-  expect(createArticleResponse.article.title).toEqual("This is an object title");
+  await expect(createArticleResponse).shouldMatchSchema('articles', 'POST_articles')
+  expect(createArticleResponse.article.title).toEqual(articleRequest.article.title);
   const slugId = createArticleResponse.article.slug;
 
   // Get articles
@@ -41,7 +41,7 @@ await expect(createArticleResponse).shouldMatchSchema('articles', 'POST_articles
     .path("/articles")
     .params({ limit: 10, offset: 0 })
     .getRequest(200);
-  expect(articlesResponse.articles[0].title).shouldEqual("This is an object title");
+  expect(articlesResponse.articles[0].title).shouldEqual(articleRequest.article.title);
 
   // Delete article
   await api
@@ -53,7 +53,7 @@ await expect(createArticleResponse).shouldMatchSchema('articles', 'POST_articles
     .path("/articles")
     .params({ limit: 10, offset: 0 })
     .getRequest(200);
-  expect(articlesResponseTwo.articles[0].title).not.shouldEqual("This is an object title");
+  expect(articlesResponseTwo.articles[0].title).not.shouldEqual(articleRequest.article.title);
 
 });
 
@@ -65,7 +65,7 @@ test("Create, Update and Delete article", async ({ api }) => {
     .path("/articles")
     .body(articleRequest)
     .postRequest(201);
-  expect(createArticleResponse.article.title).shouldEqual(articleTitle);
+  expect(createArticleResponse.article.title).shouldEqual(articleRequest.article.title);
   const slugId = createArticleResponse.article.slug;
 
   const articleTitleUpdated = faker.lorem.sentence(5)
