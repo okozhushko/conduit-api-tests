@@ -9,6 +9,7 @@ test("Get articles", async ({ api }) => {
     .params({ limit: 10, offset: 0 })
     .clearAuth()
     .getRequest(200);
+  await expect(response).shouldMatchSchema('articles', 'GET_articles', true)
   expect(response.articles.length).shouldBeLessThanOrEqual(10);
   expect(response.articlesCount).shouldEqual(10);
 });
@@ -17,7 +18,7 @@ test("Get test tags", async ({ api }) => {
   const response = await api
     .path("/tags")
     .getRequest(200);
-  expect(response).shouldMatchSchema('tags', 'GET_tags')
+  await expect(response).shouldMatchSchema('tags', 'GET_tags', true)
   expect(response.tags[0]).shouldEqual("Test");
   expect(response.tags.length).shouldBeLessThanOrEqual(10);
 });
@@ -36,6 +37,7 @@ test("Create and delete article", async ({ api }) => {
     .path("/articles")
     .params({ limit: 10, offset: 0 })
     .getRequest(200);
+  await expect(createArticleResponse).shouldMatchSchema('articles', 'POST_articles', true)
   expect(articlesResponse.articles[0].title).shouldEqual("New Test Article");
 
   // Delete article

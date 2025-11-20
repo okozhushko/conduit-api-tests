@@ -2,32 +2,46 @@ import { error } from 'console'
 import fs from 'fs/promises'
 import path, { dirname } from 'path'
 import Ajv from 'ajv'
+import { createSchema } from 'genson-js'
 
 const SCHEMA_BASE_PATH = './response-schemas'
 const ajv = new Ajv({ allErrors: true })
 
-export async function validateSchema(dirName: string, fileName: string, responseBody: object) {
-    const schemaPath = path.join(SCHEMA_BASE_PATH, dirName, `${fileName}_schema.json`)
-    const schema = await loadSchema(schemaPath)
-    const validate = ajv.compile(schema);
+export async function validateSchema(dirName: string, fileName: string, responseBody: object, createSchemaFlag: boolean = false) {
+  const schemaPath = path.join(SCHEMA_BASE_PATH, dirName, `${fileName}_schema.json`)
 
-    const valid = validate(responseBody)
-    if (!valid) {
-        throw new Error(
-            `Schema validation${fileName}_schema.json failed:\n` +
-            `${JSON.stringify(validate.errors, null, 4)}\n\n` + 
-            `Actual response body: \n` +
-            `${JSON.stringify(responseBody, null, 4)}`
-        )
+  if (createSchemaFlag) {
+    try {
+      const generatedSchema = createSchema(responseBody)
+      await fs.mkdir(path.dirname(schemaPath), { recursive: true })
+      await fs.writeFile(schemaPath, JSON.stringify(generatedSchema, null, 4))
+    } catch (error) {
+      const message = error instanceof Error ? error.message : String(error)
+      throw new Error(`Failed to create xchema file: ${message}`)
     }
-}
+  }
 
-async function loadSchema(schemaPath: string) {
-  try {
-    const schemaContent = await fs.readFile(schemaPath, 'utf-8')
-    return JSON.parse(schemaContent)
-  } catch (err) {
-    const message = err instanceof Error ? err.message : String(err)
-    throw new Error(`Failed to read the schema file: ${message}`)
+  const schema = await loadSchema(schemaPath)
+  const validate = ajv.compile(schema);
+
+  const valid = validate(responseBody)
+  if (!valid) {
+    throw new Error(
+      `Schema validation${fileName}_schema.json failed:\n` +
+      `${JSON.stringify(validate.errors, null, 4)}\n\n` +
+      `Actual response body: \n` +
+      `${JSON.stringify(responseBody, null, 4)}`
+    )
+  }
+
+
+  async function loadSchema(schemaPath: string) {
+    try {
+      const schemaContent = await fs.readFile(schemaPath, 'utf-8')
+      return JSON.parse(schemaContent)
+    } catch (err) {
+      const message = err instanceof Error ? err.message : String(err)
+      throw new Error(`Failed to read the schema file: ${message}`)
+    }
   }
 }
