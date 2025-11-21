@@ -33,7 +33,7 @@ export default defineConfig({
     },
    {
       name: 'smoke-tests',
-      testMatch: 'smoke*' //якщо це тригернути, то тільки ці тести будуть бігти
+      //testMatch: 'smoke*' //якщо це тригернути, то тільки ці тести будуть бігти
     }
   ],
 
