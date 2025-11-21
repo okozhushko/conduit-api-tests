@@ -59,3 +59,26 @@ passwordTestData.forEach(({ password, userErrorMessage }) => {
     })
 })
 
+const emailTestData = [
+    { email: 'q', userErrorMessage: 'is invalid' },
+]
+
+emailTestData.forEach(({ email, userErrorMessage }) => {
+    test(`Error message validation for email: ${email}`, async ({ api }) => {
+        const newUserResponse = await api
+            .path('/users')
+            .body({
+                user: {
+                    email: email,
+                    password: "test",
+                    username: 'test'
+                }
+            })
+            .clearAuth()
+            .postRequest(422)
+
+        expect(newUserResponse.errors.email[0]).shouldEqual(userErrorMessage)
+
+    })
+})
+
