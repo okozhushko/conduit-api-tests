@@ -1,29 +1,61 @@
 import { test } from '../utils/fixtures'
 import { expect } from '../utils/custom-expect'
 
-[
-    { username: 'dd', userErrorMessage: 'is too short (minimum is 3 characters)' },
-    { username: 'ddd', userErrorMessage: '' },
-    { username: 'dddddddddddddddddddd', userErrorMessage: '' },
-    { username: 'ddddddddddddddddddddd', userErrorMessage: 'is too long (maximum is 20 characters)' }
-].forEach(({ username, userErrorMessage }) => {
-    test(`Error message validation for ${username}`, async ({ api }) => {
+const usernameTestData = [
+    { username: 'qq', userErrorMessage: 'is too short (minimum is 3 characters)' },
+    { username: 'qqq', userErrorMessage: '' },
+    { username: 'qqqqqqqqqqqqqqqqqqqq', userErrorMessage: '' },
+    { username: 'qqqqqqqqqqqqqqqqqqqqq', userErrorMessage: 'is too long (maximum is 20 characters)' },
+]
+
+usernameTestData.forEach(({ username, userErrorMessage }) => {
+    test(`Error message validation for username: ${username}`, async ({ api }) => {
         const newUserResponse = await api
             .path('/users')
             .body({
-                "user": {
-                    "email": "b",
-                    "password": "b",
-                    "username": username
+                user: {
+                    email: 'test@test.com',
+                    password: 'test',
+                    username
                 }
             })
             .clearAuth()
             .postRequest(422)
-        if (username.length == 3 || username.length == 20)
+
+        if (username.length == 3 || username.length == 20) {
             expect(newUserResponse.errors).not.toHaveProperty('username')
-        else {
+        } else {
             expect(newUserResponse.errors.username[0]).shouldEqual(userErrorMessage)
         }
     })
-
 })
+
+const passwordTestData = [
+    { password: 'qqqqqq', userErrorMessage: 'is too short (minimum is 8 characters)' },
+    { password: 'qqqqqqqq', userErrorMessage: '' },
+    { password: 'qqqqqqqqqqqqqqqqqqqq', userErrorMessage: '' },
+    { password: 'qqqqqqqqqqqqqqqqqqqqq', userErrorMessage: 'is too long (maximum is 20 characters)' },
+]
+
+passwordTestData.forEach(({ password, userErrorMessage }) => {
+    test(`Error message validation for password: ${password}`, async ({ api }) => {
+        const newUserResponse = await api
+            .path('/users')
+            .body({
+                user: {
+                    email: 'test@test.com',
+                    password,
+                    username: 'test'
+                }
+            })
+            .clearAuth()
+            .postRequest(422)
+
+        if (password.length == 8 || password.length == 20) {
+            expect(newUserResponse.errors).not.toHaveProperty('password')
+        } else {
+            expect(newUserResponse.errors.password[0]).shouldEqual(userErrorMessage)
+        }
+    })
+})
+
