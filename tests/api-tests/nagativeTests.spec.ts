@@ -1,5 +1,5 @@
-import { test } from '../utils/fixtures'
-import { expect } from '../utils/custom-expect'
+import { test } from '../../utils/fixtures'
+import { expect } from '../../utils/custom-expect'
 
 const usernameTestData = [
     { username: 'qq', userErrorMessage: 'is too short (minimum is 3 characters)' },
