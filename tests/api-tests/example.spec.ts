@@ -70,13 +70,9 @@ test("Create and delete article", async ({ request }) => {
     }
   );
 
-  // Парсимо список статей
   const articlesResponseJSON = await articlesResponse.json();
-  // Перевіряємо, що запит успішний (код 200)
   expect(articlesResponse.status()).toEqual(200);
-  // Перевіряємо, що перша стаття у списку має правильну назву
   expect(articlesResponseJSON.articles[0].title).toEqual("New Test Article");
-  // Видаляємо створену статтю (DELETE /articles/{slug})
   const deleteArticleResponse = await request.delete(
     `https://conduit-api.bondaracademy.com/api/articles/${slugId}`,
     {
