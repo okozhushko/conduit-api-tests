@@ -8,6 +8,7 @@ export default defineConfig({
   workers: 1,
   reporter: [['html'], ['list']],
   use: {
+    baseURL: 'https://conduit.bondaracademy.com',
     trace: 'on-all-retries'
   },
 
