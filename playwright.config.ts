@@ -18,7 +18,7 @@ export default defineConfig({
       dependencies: ['api-smoke-tests']
     },
     {
-      name: 'api-smoke-testі',
+      name: 'api-smoke-tests',
       testDir: './tests/api-tests',
       testMatch: 'example*'
     },
