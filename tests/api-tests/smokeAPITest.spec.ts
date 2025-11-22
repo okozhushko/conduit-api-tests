@@ -4,16 +4,23 @@ import articleRequestPayload from "../../request-objects/POST-article.json";
 import { Faker, faker } from '@faker-js/faker';
 import { getNewRandomArticle } from "../../utils/data-generator";
 
-
-test("Get Articles", async ({ api }) => {
+test('Get Articles', async ({ api }) => {
   const response = await api
-    .path("/articles")
+    .path('/articles')
     .params({ limit: 10, offset: 0 })
-    .clearAuth()
     .getRequest(200);
-  await expect(response).shouldMatchSchema('articles', 'GET_articles')
-  expect(response.articles.length).shouldBeLessThanOrEqual(10);
-  expect(response.articlesCount).shouldEqual(10);
+
+  await expect(response).shouldMatchSchema('articles', 'GET_articles');
+  expect(response.articles.length).toBeLessThanOrEqual(10);
+  expect(response.articlesCount).toEqual(15);
+
+  response.articles.forEach((article: any) => {
+    const escapedTitle = article.title
+      .replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
+      .replace(/\s+/g, '-');
+    const expectedPattern = new RegExp(`^${escapedTitle}-\\d+$`);
+    expect(article.slug).toMatch(expectedPattern);
+  });
 });
 
 test("Get Test Tags", async ({ api }) => {
@@ -41,6 +48,7 @@ test("Create And Delete Article", async ({ api }) => {
     .path("/articles")
     .params({ limit: 10, offset: 0 })
     .getRequest(200);
+  await expect(articlesResponse).shouldMatchSchema('articles', 'GET_articles')
   expect(articlesResponse.articles[0].title).shouldEqual(articleRequest.article.title);
 
   // Delete article
@@ -53,6 +61,7 @@ test("Create And Delete Article", async ({ api }) => {
     .path("/articles")
     .params({ limit: 10, offset: 0 })
     .getRequest(200);
+  await expect(articlesResponseTwo).shouldMatchSchema('articles', 'GET_articles')
   expect(articlesResponseTwo.articles[0].title).not.shouldEqual(articleRequest.article.title);
 
 });
@@ -65,6 +74,7 @@ test("Create, Update And Delete Article", async ({ api }) => {
     .path("/articles")
     .body(articleRequest)
     .postRequest(201);
+  await expect(createArticleResponse).shouldMatchSchema('articles', 'POST_articles')
   expect(createArticleResponse.article.title).shouldEqual(articleRequest.article.title);
   const slugId = createArticleResponse.article.slug;
 
@@ -79,6 +89,7 @@ test("Create, Update And Delete Article", async ({ api }) => {
       }
     })
     .putRequest(200);
+  await expect(updateArticleResponse).shouldMatchSchema('articles', 'PUT_articles')
   expect(updateArticleResponse.article.title).shouldEqual(articleTitleUpdated);
   const newSlugId = updateArticleResponse.article.slug;
 
@@ -86,6 +97,7 @@ test("Create, Update And Delete Article", async ({ api }) => {
     .path("/articles")
     .params({ limit: 10, offset: 0 })
     .getRequest(200);
+  await expect(articlesResponse).shouldMatchSchema('articles', 'GET_articles')
   expect(articlesResponse.articles[0].title).shouldEqual(articleTitleUpdated);
 
   await api
@@ -96,6 +108,7 @@ test("Create, Update And Delete Article", async ({ api }) => {
     .path("/articles")
     .params({ limit: 10, offset: 0 })
     .getRequest(200);
+  await expect(articlesResponseTwo).shouldMatchSchema('articles', 'GET_articles')
   expect(articlesResponseTwo.articles[0].title).not.shouldEqual(articleTitleUpdated);
 
 });
