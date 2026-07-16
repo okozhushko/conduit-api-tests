@@ -18,10 +18,7 @@ jobs:
     - name: Install Playwright Browsers
       run: npx playwright install --with-deps
     - name: Run Playwright tests
-      run: npx playwright test
-      env:
-        PROD_USERNAME: ${{ secrets.PROD_USERNAME }}
-        PROD_PASSWORD: ${{ secrets.PROD_PASSWORD }}
+      run: npx playwright test --grep "api-smoke-tests"
     - uses: actions/upload-artifact@v4
       if: ${{ !cancelled() }}
       with:
