@@ -5,8 +5,6 @@ test('create article', async ({ page, request }) => {
 
     await page.getByText('Sign in').click()
 
-    console.log('PROD_USERNAME =', process.env.PROD_USERNAME);
-    console.log('PROD_PASSWORD =', process.env.PROD_PASSWORD);
     await page.getByPlaceholder('Email').fill(process.env.PROD_USERNAME!);
     await page.getByPlaceholder('Password').fill(process.env.PROD_PASSWORD!);
     await page.getByRole('button', { name: 'Sign in' }).click()

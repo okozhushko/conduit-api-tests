@@ -12,7 +12,8 @@ test('Get Articles', async ({ api }) => {
 
   await expect(response).shouldMatchSchema('articles', 'GET_articles');
   expect(response.articles.length).toBeLessThanOrEqual(10);
-  expect(response.articlesCount).toEqual(10);
+  // articlesCount is the total across all pages, not the page size
+  expect(response.articlesCount).toBeGreaterThanOrEqual(response.articles.length);
 
   response.articles.forEach((article: any) => {
     expect(article.slug).toBeTruthy();

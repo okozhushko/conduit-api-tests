@@ -18,12 +18,13 @@ export default defineConfig({
     {
       name: 'api-testing',
       testDir: './tests/api-tests',
+      testIgnore: 'smokeAPITest*',
       dependencies: ['api-smoke-tests']
     },
     {
       name: 'api-smoke-tests',
       testDir: './tests/api-tests',
-      testMatch: 'example*'
+      testMatch: 'smokeAPITest*'
     },
     {
       name: 'ui-tests',

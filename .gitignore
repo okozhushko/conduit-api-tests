@@ -10,3 +10,8 @@ node_modules/
 
 # macOS
 .DS_Store
+
+# IDE
+.idea/
+*.iml
+out/

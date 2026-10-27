@@ -1,5 +1,5 @@
-const processNew = process.env.TEST_ENV
-const env = processNew || "prod" //"dev" is the default environment and could be changed to "test" or "prod"
+// Supported values: "prod" (default) or "qa"
+const env = process.env.TEST_ENV || "prod"
 console.log('Test environment ' + env);
 
 import dotenv from 'dotenv';
@@ -16,10 +16,6 @@ if (env === "qa") {
     config.userEmail = "pwtest@test.com";
     config.userPassword = "Welcome2";
 }
-// if (env === "stage") {
-//     config.userEmail = "stage.user@test.com";
-//     config.userPassword = "stagepassword";
-// }
 if (env === "prod") {
     config.userEmail = process.env.PROD_USERNAME as string
     config.userPassword = process.env.PROD_PASSWORD as string
