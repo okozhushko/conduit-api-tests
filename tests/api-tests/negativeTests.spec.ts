@@ -22,7 +22,7 @@ usernameTestData.forEach(({ username, userErrorMessage }) => {
             .clearAuth()
             .postRequest(422)
 
-        if (username.length == 3 || username.length == 20) {
+        if (userErrorMessage === '') {
             expect(newUserResponse.errors).not.toHaveProperty('username')
         } else {
             expect(newUserResponse.errors.username[0]).shouldEqual(userErrorMessage)
@@ -51,7 +51,7 @@ passwordTestData.forEach(({ password, userErrorMessage }) => {
             .clearAuth()
             .postRequest(422)
 
-        if (password.length == 8 || password.length == 20) {
+        if (userErrorMessage === '') {
             expect(newUserResponse.errors).not.toHaveProperty('password')
         } else {
             expect(newUserResponse.errors.password[0]).shouldEqual(userErrorMessage)

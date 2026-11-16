@@ -5,8 +5,7 @@ import { request } from "@playwright/test";
 
 export async function createToken(email: string, password: string) {
     const context = await request.newContext();
-    const logger = new APILogger();
-    const api = new RequestHandler(context, config.apiUrl, logger );
+    const api = new RequestHandler(context, config.apiUrl, new APILogger());
 
     try {
         const tokenResponse = await api
@@ -14,9 +13,6 @@ export async function createToken(email: string, password: string) {
             .body({ user: { email: email, password: password } })
             .postRequest(200);
         return "Token " + tokenResponse.user.token;
-    } catch (error) {
-        Error.captureStackTrace(Error, createToken)
-        throw error;
     } finally {
         await context.dispose();
     }

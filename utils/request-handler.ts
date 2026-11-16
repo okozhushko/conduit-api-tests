@@ -1,7 +1,5 @@
-import { APIRequestContext } from "@playwright/test";
-import { expect } from "@playwright/test";
+import { APIRequestContext, test } from "@playwright/test";
 import { APILogger } from "./logger";
-import { test } from "@playwright/test"
 
 export class RequestHandler {
   private request: APIRequestContext;
@@ -15,8 +13,8 @@ export class RequestHandler {
   private defaultAuthToken: string;
   private clearAuthFlag: boolean = false;
 
-  constructor(requst: APIRequestContext, apiBaseUrl: string, logger: APILogger, authToken: string = '') {
-    this.request = requst;
+  constructor(request: APIRequestContext, apiBaseUrl: string, logger: APILogger, authToken: string = '') {
+    this.request = request;
     this.defaultBaseUrl = apiBaseUrl;
     this.logger = logger;
     this.defaultAuthToken = authToken;
@@ -94,7 +92,7 @@ export class RequestHandler {
     let responseJSON: any
     const url = this.getUrl();
 
-    await test.step(`POST request to: ${url}`, async () => {
+    await test.step(`PUT request to: ${url}`, async () => {
       this.logger.logRequest("PUT", url, this.getHeaders(), this.apiBody);
       const response = await this.request.put(url, {
         headers: this.apiHeaders,
@@ -114,7 +112,7 @@ export class RequestHandler {
     let responseJSON: any
     const url = this.getUrl();
 
-    await test.step(`DELEE request to: ${url}`, async () => {
+    await test.step(`DELETE request to: ${url}`, async () => {
       this.logger.logRequest("DELETE", url, this.getHeaders());
 
       const response = await this.request.delete(url, {

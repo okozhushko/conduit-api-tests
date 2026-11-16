@@ -1,7 +1,7 @@
 import { test as base } from "@playwright/test";
 import { RequestHandler } from "../utils/request-handler";
 import { APILogger } from "../utils/logger";    
-import { setCostomExpectLogger } from "./custom-expect";
+import { setCustomExpectLogger } from "./custom-expect";
 import { config } from "../api-test.config";
 import { createToken } from "../helpers/createToken";
 
@@ -22,9 +22,9 @@ export const test = base.extend<TestOptions, WorkerFixture>({
 
     api: async({request, authToken}, use) => {
         const logger = new APILogger();
-        setCostomExpectLogger(logger);
-        const reauestHandler = new RequestHandler(request, config.apiUrl, logger, authToken);
-        await use(reauestHandler);
+        setCustomExpectLogger(logger);
+        const requestHandler = new RequestHandler(request, config.apiUrl, logger, authToken);
+        await use(requestHandler);
     },
     config: async ({}, use) => {
         await use(config);

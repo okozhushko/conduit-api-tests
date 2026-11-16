@@ -1,7 +1,6 @@
 import { test } from "../../utils/fixtures";
 import { expect } from "../../utils/custom-expect";
-import articleRequestPayload from "../../request-objects/POST-article.json";
-import { Faker, faker } from '@faker-js/faker';
+import { faker } from '@faker-js/faker';
 import { getNewRandomArticle } from "../../utils/data-generator";
 
 test('Get Articles', async ({ api }) => {
@@ -53,20 +52,13 @@ test("Create And Delete Article", async ({ api }) => {
     .path(`/articles/${slugId}`)
     .deleteRequest(204);
 
-  //Check article is deleted
-  const articlesResponseTwo = await api
-    .path("/articles")
-    .params({ limit: 10, offset: 0 })
-    .getRequest(200);
-  await expect(articlesResponseTwo).shouldMatchSchema('articles', 'GET_articles')
-  expect(articlesResponseTwo.articles[0].title).not.shouldEqual(articleRequest.article.title);
-
+  await api
+    .path(`/articles/${slugId}`)
+    .getRequest(404);
 });
 
 test("Create, Update And Delete Article", async ({ api }) => {
-  const articleTitle = faker.lorem.sentence(5)
-  const articleRequest = JSON.parse(JSON.stringify(articleRequestPayload))
-  articleRequest.article.title = articleTitle
+  const articleRequest = getNewRandomArticle()
   const createArticleResponse = await api
     .path("/articles")
     .body(articleRequest)
@@ -101,13 +93,8 @@ test("Create, Update And Delete Article", async ({ api }) => {
     .path(`/articles/${newSlugId}`)
     .deleteRequest(204);
 
-  const articlesResponseTwo = await api
-    .path("/articles")
-    .params({ limit: 10, offset: 0 })
-    .getRequest(200);
-  await expect(articlesResponseTwo).shouldMatchSchema('articles', 'GET_articles')
-  expect(articlesResponseTwo.articles[0].title).not.shouldEqual(articleTitleUpdated);
-
+  await api
+    .path(`/articles/${newSlugId}`)
+    .getRequest(404);
 });
-
 

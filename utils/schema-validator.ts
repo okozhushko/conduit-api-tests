@@ -20,7 +20,7 @@ export async function validateSchema(dirName: string, fileName: string, response
   const valid = validate(responseBody)
   if (!valid) {
     throw new Error(
-      `Schema validation${fileName}_schema.json failed:\n` +
+      `Schema validation ${fileName}_schema.json failed:\n` +
       `${JSON.stringify(validate.errors, null, 4)}\n\n` +
       `Actual response body: \n` +
       `${JSON.stringify(responseBody, null, 4)}`
@@ -46,6 +46,6 @@ async function generateNewSchema(responseBody: Object, schemaPath: string) {
     await fs.writeFile(schemaPath, JSON.stringify(generatedSchema, null, 4))
   } catch (error) {
     const message = error instanceof Error ? error.message : String(error)
-    throw new Error(`Failed to create xchema file: ${message}`)
+    throw new Error(`Failed to create schema file: ${message}`)
   }
 }
