@@ -4,7 +4,7 @@ import { validateSchema } from './schema-validator';
 
 let aPILogger: APILogger;
 
-export const setCostomExpectLogger = (logger: APILogger) => {
+export const setCustomExpectLogger = (logger: APILogger) => {
     aPILogger = logger;
 }
 
@@ -20,12 +20,12 @@ declare global {
 
 
 export const expect = baseExpect.extend({
-    async shouldMatchSchema(resived: any, dirName: string, fileName: string, createSchemaFlag: boolean = false) { // to refresh schema need to change bolean to TRUE
+    async shouldMatchSchema(received: any, dirName: string, fileName: string, createSchemaFlag: boolean = false) { // pass createSchemaFlag = true to regenerate the schema from this response
         let pass: boolean;
         let message: string = '';
 
         try {
-            await validateSchema(dirName, fileName, resived, createSchemaFlag)
+            await validateSchema(dirName, fileName, received, createSchemaFlag)
             pass = true;
             message = 'Schema validation passed';
 
@@ -39,12 +39,12 @@ export const expect = baseExpect.extend({
             pass
         };
     },
-    shouldEqual(resived: any, expected: any) {
+    shouldEqual(received: any, expected: any) {
         let pass: boolean;
         let logs: string = ''
 
         try {
-            baseExpect(resived).toEqual(expected);
+            baseExpect(received).toEqual(expected);
             pass = true;
             if (this.isNot) {
                 logs = aPILogger.getRecentLogs();
@@ -58,7 +58,7 @@ export const expect = baseExpect.extend({
         const message = this.utils.matcherHint('shouldEqual', undefined, undefined, { isNot: this.isNot }) +
             '\n\n' +
             `Expected: ${hint} ${this.utils.printExpected(expected)}\n` +
-            `Received: ${this.utils.printReceived(resived)}\n` +
+            `Received: ${this.utils.printReceived(received)}\n` +
             `Recent API Activity Logs:\n${logs}`
         return {
             message: () => message,
@@ -66,12 +66,12 @@ export const expect = baseExpect.extend({
         };
     },
 
-    shouldBeLessThanOrEqual(resived: any, expected: any) {
+    shouldBeLessThanOrEqual(received: any, expected: any) {
         let pass: boolean;
         let logs: string = ''
 
         try {
-            baseExpect(resived).toBeLessThanOrEqual(expected);
+            baseExpect(received).toBeLessThanOrEqual(expected);
             pass = true;
             if (this.isNot) {
                 logs = aPILogger.getRecentLogs();
@@ -85,7 +85,7 @@ export const expect = baseExpect.extend({
         const message = this.utils.matcherHint('shouldBeLessThanOrEqual', undefined, undefined, { isNot: this.isNot }) +
             '\n\n' +
             `Expected: ${hint} ${this.utils.printExpected(expected)}\n` +
-            `Received: ${this.utils.printReceived(resived)}\n` +
+            `Received: ${this.utils.printReceived(received)}\n` +
             `Recent API Activity Logs:\n${logs}`
         return {
             message: () => message,
